@@ -1,0 +1,11 @@
+Raul Cardenas
+CS ID: rulises
+UT EID: ruc63
+
+Andrew Downing
+CS ID: andrew
+UT EID: AHD276
+
+This attack exploits a format string vulnerability. It does this by overwriting the address  pointed in the buffer, with the %n string format, which purspose is overwrite  the eip. This allows the stack pointer to point to the address of back to the  attack buffer. 
+
+First step was calculate the right number of %u, that were needed to move the stack pointer to the buffer memory location.Then the second %n is written to overwrite the las byte of the address, otherwise it won't let give us the address of the  buffer.

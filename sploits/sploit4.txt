@@ -1,0 +1,14 @@
+Raul Cardenas
+CS ID: rulises
+UT EID: ruc63
+
+Andrew Downing
+CS ID: andrew
+UT EID: AHD276
+
+For this attack we exploited the bug that the target was doing a double malloc on the same  pointer(q).
+By allocating p and the q, we know that p might com before q and it is according to GDB. Then if we free both of them and allocate p again with a greater size, it might cover the memory that used to be allocated to q. And in this case it is. Since we are able to copy a buffer into p's allocated space, then we write also on q's memory. 
+
+The fact that we are writting over q, then we can fake  the information located at that address. After writting the buffer, the target will free q, and since we provided fake  data, we are able to manipulate and predict the outcome of that operation.  In this case we said that the previous block was at the beginning of p and that the right block began in the EIP address, then the tfree()  will free q and write the p's address in EIP, since it thinks that it is the left address of a memory block. Then the EIP will jump to p's but since we had to write also fake memory address for the tfree operation, we need to write in the left block a jmp instruction so we can jump the next two words.
+
+So basically, the sploit tricks the program into thinking it is freeing an allocated chunk of memory. However, the sploit is providing an arbitrary write attack. This is used to overwrite foo's saved eip, replacing it with an address after the fake block structure written in the allocated block p. This makes the Instruction pointer to jump to a sequence of NOP's, which will be consumed until it reaches the shell code. The attack code is executed and a root shell is produced. 

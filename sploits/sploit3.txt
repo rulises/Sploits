@@ -1,0 +1,14 @@
+Raul Cardenas
+CS ID: rulises
+UT EID: ruc63
+
+Andrew Downing
+CS ID: andrew
+UT EID: AHD276
+
+The target 3 has a struct of 3 doubles(8 bytes each) and 1 int(4 bytes). Therefore the size of each widget struct is 28 bytes. Now to calculate the maximum capacity of the buffer is 28 * 200 = 5600bytes.
+From this we can discover the structure of the stack for foo's frame
+
+[buf (5600bytes)][ESP(4bytes)][EIP(4bytes)][char * in(4bytes)][int count (4bytes)]
+
+So to overflow and overwrite either of ESP or EIP we need more than 5600 bytes. In order to by pass the size check, "if (count < MAX_WIDGETS) "" we use as a negative number as count. This exploits the bug that the function is just checking the upper bound and not the lower bound.  If the negative number is to small as -2147483447, then a integer overflow will occur and number from the the multiplication result will be cut-off. This makes  possible to write  more than 5600 bytes throug memcpy(buf, in, count * sizeof(struct widget_t)).
